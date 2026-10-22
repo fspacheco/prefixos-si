@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101a2b">
+<meta name="description" content="Aula interativa sobre prefixos do SI (mA, kΩ, μA, MΩ, nF) e notação de engenharia, com exercícios corrigidos e conversor de unidades.">
+<title>Prefixos do SI e Notação de Engenharia — Eletricidade</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+
+  :root{
+    --bg:#f5f7fb;
+    --surface:#ffffff;
+    --ink:#16202e;
+    --ink-2:#33445c;
+    --muted:#65758c;
+    --line:#e3e8f1;
+    --line-2:#eef2f8;
+    --accent:#2f5bd7;
+    --accent-2:#1e3a6e;
+    --accent-soft:#eaf0ff;
+    --good:#0f7a58;
+    --good-soft:#e6f6ef;
+    --bad:#c0392b;
+    --bad-soft:#fdecea;
+    --warn:#a86a12;
+    --warn-soft:#fdf4e3;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(16,32,54,.05), 0 8px 24px -12px rgba(16,32,54,.18);
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.62;
+    font-size:16px;
+  }
+  h1,h2,h3,h4{margin:0;line-height:1.25;letter-spacing:-.01em}
+  p{margin:0 0 .85em}
+  p:last-child{margin-bottom:0}
+  b,strong{font-weight:650}
+  sup{font-size:.72em;line-height:0}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    background:
+      radial-gradient(900px 380px at 88% -10%, rgba(93,140,255,.45), transparent 62%),
+      linear-gradient(135deg,#0d1626 0%,#16294a 52%,#24437e 100%);
+    color:#fff;
+    padding:clamp(30px,6vw,58px) 20px clamp(26px,5vw,44px);
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;
+    background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:34px 34px;
+    mask-image:linear-gradient(to bottom,rgba(0,0,0,.85),transparent 85%);
+    pointer-events:none;
+  }
+  .hero-inner{position:relative;max-width:920px;margin:0 auto;z-index:1}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+    color:#bcd0f7;background:rgba(255,255,255,.09);
+    border:1px solid rgba(255,255,255,.16);
+    padding:6px 12px;border-radius:999px;margin-bottom:16px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:#6ee7b7;box-shadow:0 0 0 3px rgba(110,231,183,.22)}
+  .hero h1{font-size:clamp(1.6rem,5.2vw,2.55rem);font-weight:750;letter-spacing:-.02em}
+  .hero h1 em{font-style:normal;color:#9dc0ff}
+  .hero p{margin-top:12px;color:#c6d5ee;font-size:clamp(.95rem,2.4vw,1.06rem);max-width:62ch}
+  .hero-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .hero-chips span{
+    font-family:var(--mono);font-size:.8rem;color:#dbe7fb;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+    padding:5px 11px;border-radius:8px;
+  }
+
+  /* ---------- TABS ---------- */
+  .tabs-wrap{
+    position:sticky;top:0;z-index:30;
+    background:rgba(245,247,251,.9);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .tabs{
+    max-width:920px;margin:0 auto;padding:9px 14px;
+    display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;appearance:none;border:1px solid transparent;background:transparent;
+    color:var(--muted);font:inherit;font-weight:600;font-size:.92rem;
+    padding:9px 16px;border-radius:999px;cursor:pointer;white-space:nowrap;
+    transition:background .18s,color .18s,border-color .18s;
+  }
+  .tab:hover{color:var(--ink);background:#eaeff8}
+  .tab[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 6px 16px -8px rgba(47,91,215,.9)}
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* ---------- LAYOUT ---------- */
+  main{max-width:920px;margin:0 auto;padding:clamp(18px,4vw,34px) 16px 72px}
+  .panel{display:none;animation:fade .28s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:clamp(16px,3.4vw,26px);box-shadow:var(--shadow);margin-bottom:18px;
+  }
+  .card > h2{
+    font-size:clamp(1.12rem,3vw,1.32rem);font-weight:700;
+    display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  }
+  .card > h2 .num{
+    flex:0 0 auto;display:grid;place-items:center;
+    width:28px;height:28px;border-radius:9px;background:var(--accent-soft);color:var(--accent);
+    font-size:.85rem;font-weight:800;font-family:var(--mono);
+  }
+  .card h3{font-size:1rem;font-weight:700;margin:18px 0 8px;color:var(--ink)}
+  .lead{color:var(--ink-2)}
+  .muted{color:var(--muted)}
+  .small{font-size:.88rem}
+
+  .u{color:var(--accent);font-weight:650}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums;word-spacing:-.06em}
+
+  /* ---------- TABELA DE PREFIXOS ---------- */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px -4px 0;padding:0 4px}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:.93rem}
+  thead th{
+    text-align:left;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  tbody td{padding:10px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:#fafbfe}
+  td.pref{font-weight:650}
+  td.sym{font-family:var(--mono);font-size:1.05rem;color:var(--accent);font-weight:700}
+  td.val,td.pot{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+
+  /* ---------- ESCADA ---------- */
+  .ladder{
+    display:flex;align-items:center;gap:0;overflow-x:auto;padding:14px 2px 6px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:thin;
+  }
+  .step{
+    flex:0 0 auto;display:grid;place-items:center;min-width:68px;padding:11px 14px;
+    border:1px solid var(--line);border-radius:12px;background:#fbfcfe;
+    font-family:var(--mono);font-weight:700;font-size:1rem;color:var(--ink);
+  }
+  .step small{display:block;font-family:system-ui,sans-serif;font-weight:600;font-size:.62rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+  .step.hi{background:var(--accent-soft);border-color:#c9d8ff;color:var(--accent)}
+  .op{
+    flex:0 0 auto;display:grid;place-items:center;padding:0 9px;
+    font-family:var(--mono);font-size:.76rem;color:var(--muted);white-space:nowrap;
+  }
+  .op b{color:var(--accent)}
+
+  /* ---------- EXEMPLOS RESOLVIDOS ---------- */
+  .example{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;background:#fbfcfe}
+  .example .head{font-weight:650;margin-bottom:6px;font-size:.96rem}
+  .steps{list-style:none;margin:8px 0 0;padding:0;counter-reset:s}
+  .steps li{
+    position:relative;padding-left:26px;margin-bottom:6px;font-size:.92rem;color:var(--ink-2);
+  }
+  .steps li::before{
+    counter-increment:s;content:counter(s);
+    position:absolute;left:0;top:.18em;width:18px;height:18px;border-radius:50%;
+    background:#e8eefb;color:var(--accent);font-size:.68rem;font-weight:800;
+    display:grid;place-items:center;font-family:var(--mono);
+  }
+  .result{
+    margin-top:10px;padding:9px 12px;border-radius:10px;background:var(--good-soft);
+    border:1px solid #c7ead9;color:#0b5c43;font-weight:650;font-size:.95rem;
+  }
+  .result .mono{font-size:1.02em}
+
+  /* ---------- DICAS ---------- */
+  .tip{
+    display:flex;gap:12px;padding:14px 16px;border-radius:12px;
+    background:var(--warn-soft);border:1px solid #f0dcb4;color:#6b4708;font-size:.92rem;
+  }
+  .tip .ico{flex:0 0 auto;font-size:1.1rem;line-height:1.4}
+  .tip.blue{background:var(--accent-soft);border-color:#cddcff;color:#1b3a80}
+  .tip.green{background:var(--good-soft);border-color:#c7ead9;color:#0b5c43}
+  .tip p{margin:0}
+  .tip b{color:inherit}
+
+  /* ---------- FÓRMULAS ---------- */
+  .formula{
+    display:flex;align-items:center;justify-content:center;gap:.15em;flex-wrap:wrap;
+    font-family:var(--mono);font-size:clamp(1.05rem,3.4vw,1.3rem);font-weight:600;
+    padding:16px;margin:8px 0;background:#f7f9fd;border:1px dashed #d5deee;border-radius:12px;
+  }
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .2em}
+  .frac > span:first-child{border-bottom:1.6px solid currentColor;padding:0 .4em .12em}
+  .frac > span:last-child{padding:.12em .4em 0}
+
+  .grid-2{display:grid;gap:12px;grid-template-columns:1fr}
+  @media(min-width:640px){.grid-2{grid-template-columns:1fr 1fr}}
+
+  .mini-card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fbfcfe}
+  .mini-card h4{font-size:.86rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px}
+  .mini-card .big{font-family:var(--mono);font-size:1.02rem;font-weight:700;color:var(--ink);line-height:1.9}
+  .mini-card .big span{color:var(--accent)}
+
+  /* ---------- EXERCÍCIOS ---------- */
+  .level-switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  @media(min-width:560px){.level-switch{display:flex;flex-wrap:wrap}}
+  .level-btn{
+    appearance:none;font:inherit;font-weight:650;font-size:.88rem;cursor:pointer;
+    padding:11px 14px;border-radius:12px;text-align:center;border:1px solid var(--line);background:var(--surface);
+    color:var(--ink-2);transition:all .18s;box-shadow:0 1px 2px rgba(16,32,54,.04);
+  }
+  .level-btn .lv{display:block;font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.7;margin-bottom:1px}
+  .level-btn:hover{border-color:#c9d8ff;color:var(--accent)}
+  .level-btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 8px 18px -10px rgba(47,91,215,.95)}
+  .level-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .quiz-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+  .quiz-meta{font-size:.82rem;color:var(--muted);font-weight:600}
+  .quiz-meta b{color:var(--ink);font-family:var(--mono)}
+  .bar{height:7px;background:#e8edf6;border-radius:999px;overflow:hidden;margin-bottom:18px}
+  .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4a7bf0,#2f5bd7);border-radius:999px;transition:width .35s ease}
+
+  .q-text{font-size:clamp(1.02rem,2.9vw,1.16rem);font-weight:600;line-height:1.55;margin-bottom:6px}
+  .q-text .val{color:var(--accent);font-family:var(--mono);font-weight:700;white-space:nowrap;word-spacing:-.08em}
+  .q-hint{font-size:.86rem;color:var(--muted);margin-bottom:16px}
+
+  .options{display:grid;gap:9px;margin-top:4px}
+  .opt{
+    display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    font:inherit;font-size:1rem;cursor:pointer;
+    padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);
+    color:var(--ink);transition:border-color .15s,background .15s,transform .06s;
+    min-height:52px;
+  }
+  .opt:hover:not(:disabled){border-color:#b9cbf5;background:#f8faff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .opt .letter{
+    flex:0 0 auto;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;
+    background:#eef2fa;color:var(--muted);font-family:var(--mono);font-size:.8rem;font-weight:800;
+  }
+  .opt .txt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600;font-size:.98rem;word-spacing:-.08em}
+  .opt:disabled{cursor:default}
+  .opt.correct{border-color:#7fd0ae;background:var(--good-soft)}
+  .opt.correct .letter{background:#0f7a58;color:#fff}
+  .opt.wrong{border-color:#eab3ac;background:var(--bad-soft)}
+  .opt.wrong .letter{background:#c0392b;color:#fff}
+  .opt.dim{opacity:.5}
+
+  .feedback{margin-top:16px;border-radius:12px;padding:14px 16px;border:1px solid;display:none}
+  .feedback.show{display:block;animation:fade .22s ease}
+  .feedback.ok{background:var(--good-soft);border-color:#c7ead9;color:#0b5c43}
+  .feedback.no{background:var(--bad-soft);border-color:#f2c8c2;color:#8c2a1f}
+  .feedback .fb-title{font-weight:750;display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.98rem}
+  .feedback .fb-body{font-size:.93rem;line-height:1.6}
+  .feedback .fb-body .mono{background:rgba(255,255,255,.6);padding:1px 5px;border-radius:5px}
+
+  .quiz-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .btn{
+    appearance:none;font:inherit;font-weight:650;font-size:.95rem;cursor:pointer;
+    padding:12px 20px;border-radius:12px;border:1px solid transparent;
+    background:var(--accent);color:#fff;transition:filter .15s,transform .06s;
+    box-shadow:0 8px 18px -12px rgba(47,91,215,1);
+  }
+  .btn:hover{filter:brightness(1.06)}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn.ghost{background:transparent;color:var(--ink-2);border-color:var(--line);box-shadow:none}
+  .btn.ghost:hover{background:#f1f5fc;color:var(--ink)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed;filter:none}
+
+  /* ---------- RESULTADO ---------- */
+  .result-screen{text-align:center;padding:8px 0 4px}
+  .score-ring{
+    width:142px;height:142px;border-radius:50%;margin:6px auto 14px;
+    display:grid;place-items:center;position:relative;
+    background:conic-gradient(var(--accent) calc(var(--p)*1%), #e8edf6 0);
+  }
+  .score-ring::before{content:"";position:absolute;inset:12px;border-radius:50%;background:var(--surface)}
+  .score-ring .inner{position:relative;text-align:center}
+  .score-ring .n{font-family:var(--mono);font-size:1.8rem;font-weight:800;line-height:1.05}
+  .score-ring .d{font-size:.68rem;color:var(--muted);font-weight:650;white-space:nowrap}
+  .result-screen h3{font-size:1.15rem;margin-bottom:6px}
+  .result-screen .msg{color:var(--ink-2);max-width:46ch;margin:0 auto 4px;font-size:.95rem}
+
+  .review{margin-top:22px;text-align:left}
+  .review h4{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .review-item{border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:8px;background:#fbfcfe;font-size:.9rem}
+  .review-item .rq{font-weight:600;margin-bottom:3px}
+  .review-item .ra{color:var(--good);font-family:var(--mono);font-weight:650}
+  .review-item .ry{color:var(--bad);font-family:var(--mono)}
+
+  /* ---------- CONVERSOR ---------- */
+  .conv-form{display:grid;gap:12px;grid-template-columns:1fr;margin-bottom:6px}
+  @media(min-width:600px){.conv-form{grid-template-columns:1.4fr 1fr 1fr}}
+  .field label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .field input,.field select{
+    width:100%;font:inherit;font-size:1rem;font-family:var(--mono);
+    padding:12px 13px;border-radius:11px;border:1.5px solid var(--line);background:#fff;color:var(--ink);
+    min-height:48px;
+  }
+  .field input:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,91,215,.14)}
+  .field select{font-family:system-ui,sans-serif}
+
+  .conv-out{margin-top:18px;display:grid;gap:8px}
+  .conv-row{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:11px 14px;border-radius:11px;border:1px solid var(--line);background:#fbfcfe;
+  }
+  .conv-row .k{font-size:.82rem;color:var(--muted);font-weight:650;letter-spacing:.02em}
+  .conv-row .v{font-family:var(--mono);font-size:1.02rem;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+  .conv-row.usual{background:var(--accent-soft);border-color:#c9d8ff}
+  .conv-row.usual .v{color:var(--accent)}
+  .conv-row.usual .k{color:#3a5da8}
+  .badge{font-size:.64rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:2px 7px;border-radius:5px;margin-left:8px;vertical-align:2px}
+  .conv-note{margin-top:14px;font-size:.88rem;color:var(--muted)}
+  .conv-note .mono{color:var(--ink)}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--line);background:#fff}
+  .foot-inner{max-width:920px;margin:0 auto;padding:22px 16px 34px;font-size:.83rem;color:var(--muted)}
+  .foot-inner b{color:var(--ink-2)}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow"><span class="dot"></span>Eletricidade · Revisão de unidades</span>
+    <h1>Prefixos do SI e <em>notação de engenharia</em></h1>
+    <p>Como ler e operar valores em <b>mA</b>, <b>kΩ</b>, <b>μA</b>, <b>MΩ</b> e <b>nF</b> sem se perder nas vírgulas. Explicação passo a passo, 40 exercícios corrigidos e um conversor de unidades.</p>
+    <div class="hero-chips">
+      <span>1 mA = 0,001 A</span>
+      <span>1 kΩ = 1 000 Ω</span>
+      <span>1 μA = 0,000 001 A</span>
+      <span>1 MΩ = 1 000 000 Ω</span>
+    </div>
+  </div>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" role="tablist" aria-label="Seções da página">
+    <button class="tab" role="tab" id="tab-aprender" aria-controls="panel-aprender" aria-selected="true" data-tab="aprender">Aprender</button>
+    <button class="tab" role="tab" id="tab-exercicios" aria-controls="panel-exercicios" aria-selected="false" data-tab="exercicios">Exercícios</button>
+    <button class="tab" role="tab" id="tab-conversor" aria-controls="panel-conversor" aria-selected="false" data-tab="conversor">Conversor</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- ================= APRENDER ================= -->
+  <section class="panel active" id="panel-aprender" role="tabpanel" aria-labelledby="tab-aprender">
+
+    <div class="card">
+      <h2><span class="num">1</span>Por que usamos prefixos?</h2>
+      <p class="lead">Ninguém fala “comprei 5 000 gramas de açúcar” — falamos <b>5 kg</b>. Em eletrônica acontece o mesmo: os valores são muito grandes ou muito pequenos para a unidade “pura”.</p>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="mini-card">
+          <h4>Sem prefixo</h4>
+          <div class="big">100 000 Ω<br>0,002 A<br>0,000 000 1 F</div>
+        </div>
+        <div class="mini-card">
+          <h4>Com prefixo</h4>
+          <div class="big"><span>100 kΩ</span><br><span>2 mA</span><br><span>100 nF</span></div>
+        </div>
+      </div>
+      <p class="small muted" style="margin-top:12px">O valor é o mesmo. O prefixo só muda <b>onde fica a vírgula</b> — e é isso que torna o número legível.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">2</span>A tabela dos prefixos</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Prefixo</th><th>Símbolo</th><th>Valor</th><th>Potência</th><th>Exemplo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="pref">mega</td><td class="sym">M</td><td class="val">1 000 000</td><td class="pot">10<sup>6</sup></td><td class="val">2,2 MΩ</td></tr>
+            <tr><td class="pref">quilo</td><td class="sym">k</td><td class="val">1 000</td><td class="pot">10<sup>3</sup></td><td class="val">22 kΩ</td></tr>
+            <tr><td class="pref">— (unidade)</td><td class="sym">—</td><td class="val">1</td><td class="pot">10<sup>0</sup></td><td class="val">470 Ω</td></tr>
+            <tr><td class="pref">mili</td><td class="sym">m</td><td class="val">0,001</td><td class="pot">10<sup>−3</sup></td><td class="val">5 mA</td></tr>
+            <tr><td class="pref">micro</td><td class="sym">μ</td><td class="val">0,000 001</td><td class="pot">10<sup>−6</sup></td><td class="val">20 μA</td></tr>
+            <tr><td class="pref">nano</td><td class="sym">n</td><td class="val">0,000 000 001</td><td class="pot">10<sup>−9</sup></td><td class="val">100 nF</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tip blue" style="margin-top:14px">
+        <span class="ico">⚠️</span>
+        <p><b>Cuidado com as maiúsculas:</b> <span class="mono">M</span> é mega (milhão) e <span class="mono">m</span> é mili (milésimo). <span class="mono">2 mΩ</span> e <span class="mono">2 MΩ</span> são valores <b>um bilhão de vezes</b> diferentes.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">3</span>Como converter: ande de 1000 em 1000</h2>
+      <p class="lead">Cada degrau da escada vale <b>1000</b> (três casas decimais). Para ir para a <b>direita</b> (prefixo menor), multiplica-se por 1000 e a vírgula anda 3 casas para a direita. Para ir para a <b>esquerda</b> (prefixo maior), divide-se por 1000 e a vírgula anda 3 casas para a esquerda.</p>
+
+      <div class="ladder" aria-label="Escada dos prefixos">
+        <div class="step">n<small>nano</small></div>
+        <div class="op"><b>×1000 →</b></div>
+        <div class="step">μ<small>micro</small></div>
+        <div class="op"><b>×1000 →</b></div>
+        <div class="step">m<small>mili</small></div>
+        <div class="op"><b>×1000 →</b></div>
+        <div class="step hi">—<small>unidade</small></div>
+        <div class="op"><b>×1000 →</b></div>
+        <div class="step">k<small>quilo</small></div>
+        <div class="op"><b>×1000 →</b></div>
+        <div class="step">M<small>mega</small></div>
+      </div>
+      <p class="small muted">No sentido inverso (←), divida por 1000. Exemplo: de <span class="mono">mA</span> para <span class="mono">A</span> são 3 casas para a esquerda.</p>
+
+      <h3>Exemplo 1 — corrente</h3>
+      <div class="example">
+        <div class="head">Escreva <span class="mono">0,005 A</span> em mA.</div>
+        <ol class="steps">
+          <li>De <b>A</b> para <b>mA</b> descemos um degrau → multiplicamos por 1000.</li>
+          <li><span class="mono">0,005 × 1000 = 5</span></li>
+          <li>Ou: vírgula 3 casas para a direita → <span class="mono">0,005 → 5</span></li>
+        </ol>
+        <div class="result">0,005 A = <span class="mono">5 mA</span></div>
+      </div>
+
+      <h3>Exemplo 2 — resistência</h3>
+      <div class="example">
+        <div class="head">Escreva <span class="mono">47 200 Ω</span> em kΩ.</div>
+        <ol class="steps">
+          <li>De <b>Ω</b> para <b>kΩ</b> subimos um degrau → dividimos por 1000.</li>
+          <li><span class="mono">47 200 ÷ 1000 = 47,2</span></li>
+          <li>Ou: vírgula 3 casas para a esquerda → <span class="mono">47 200 → 47,2</span></li>
+        </ol>
+        <div class="result">47 200 Ω = <span class="mono">47,2 kΩ</span></div>
+      </div>
+
+      <h3>Exemplo 3 — dois degraus de uma vez</h3>
+      <div class="example">
+        <div class="head">Escreva <span class="mono">0,000 005 6 A</span> em μA.</div>
+        <ol class="steps">
+          <li>De <b>A</b> para <b>μA</b> são dois degraus (A → mA → μA) → multiplicamos por 1000 duas vezes, isto é, por 1 000 000.</li>
+          <li><span class="mono">0,000 005 6 × 1 000 000 = 5,6</span></li>
+          <li>Ou: vírgula 6 casas para a direita.</li>
+        </ol>
+        <div class="result">0,000 005 6 A = <span class="mono">5,6 μA</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">4</span>Notação de engenharia: a “forma usual”</h2>
+      <p class="lead">Na área técnica não basta converter: escolhemos a representação mais confortável de ler. São duas regras.</p>
+      <div class="grid-2" style="margin-top:12px">
+        <div class="mini-card">
+          <h4>Regra 1 — expoente múltiplo de 3</h4>
+          <p class="small" style="margin:0">A potência de 10 deve ser <b>…, −9, −6, −3, 0, 3, 6, 9, …</b> — porque cada salto de 3 corresponde a um prefixo.</p>
+        </div>
+        <div class="mini-card">
+          <h4>Regra 2 — número entre 1 e 999</h4>
+          <p class="small" style="margin:0">A parte antes da vírgula fica em <b>1 ≤ n &lt; 1000</b>. Assim evitamos <span class="mono">0,039 kΩ</span> ou <span class="mono">1500 mA</span>.</p>
+        </div>
+      </div>
+
+      <h3>Exemplo resolvido</h3>
+      <div class="example">
+        <div class="head">Calcule <span class="mono">480 ÷ 4000</span> e escreva em notação de engenharia.</div>
+        <ol class="steps">
+          <li>Conta direta: <span class="mono">480 ÷ 4000 = 0,12</span>.</li>
+          <li><span class="mono">0,12 = 12 × 10<sup>−2</sup></span> — mas <span class="mono">10<sup>−2</sup></span> não tem prefixo usual (só o centi, do centímetro).</li>
+          <li>Multiplicamos por 10 em cima e embaixo para chegar a um expoente múltiplo de 3: <span class="mono">0,12 = 120 × 10<sup>−3</sup></span>.</li>
+          <li><span class="mono">10<sup>−3</sup></span> é o prefixo <b>mili</b> (m).</li>
+        </ol>
+        <div class="result">480 ÷ 4000 = <span class="mono">120 m</span> (120 mili, da unidade que estiver em jogo)</div>
+      </div>
+
+      <div class="tip" style="margin-top:14px">
+        <span class="ico">💡</span>
+        <p><b>Teste rápido:</b> se o número ficou com mais de 3 algarismos antes da vírgula (ex.: <span class="mono">1500 mA</span>), suba um degrau: <span class="mono">1,5 A</span>. Se ficou menor que 1 (ex.: <span class="mono">0,039 kΩ</span>), desça um degrau: <span class="mono">39 Ω</span>.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">5</span>Juntando tudo: Lei de Ohm com prefixos</h2>
+      <p class="lead">A Lei de Ohm é <b>V = R · I</b>. O segredo para não errar é manter as unidades coerentes — e existe um atalho muito útil.</p>
+
+      <div class="formula">V = R × I &nbsp;&nbsp;·&nbsp;&nbsp; I = <span class="frac"><span>V</span><span>R</span></span> &nbsp;&nbsp;·&nbsp;&nbsp; R = <span class="frac"><span>V</span><span>I</span></span></div>
+
+      <h3>O atalho que dispensa a calculadora</h3>
+      <p class="small">Se você combinar prefixos “opostos”, os fatores de 1000 se cancelam e o resultado sai direto:</p>
+      <div class="grid-2" style="margin-top:10px">
+        <div class="mini-card">
+          <h4>Multiplicação</h4>
+          <div class="big">kΩ × mA = <span>V</span><br>MΩ × μA = <span>V</span><br>Ω × A = <span>V</span></div>
+        </div>
+        <div class="mini-card">
+          <h4>Divisão</h4>
+          <div class="big">V ÷ kΩ = <span>mA</span><br>V ÷ MΩ = <span>μA</span><br>mV ÷ Ω = <span>mA</span></div>
+        </div>
+      </div>
+
+      <h3>Exemplo</h3>
+      <div class="example">
+        <div class="head">Um resistor de <span class="mono">8,2 kΩ</span> é percorrido por <span class="mono">200 μA</span>. Qual a tensão?</div>
+        <ol class="steps">
+          <li>Converta para as unidades base: <span class="mono">8 200 Ω</span> e <span class="mono">0,000 2 A</span>.</li>
+          <li><span class="mono">V = 8 200 × 0,000 2 = 1,64</span></li>
+          <li>Pelo atalho: <span class="mono">kΩ × μA = mV</span> → <span class="mono">8,2 × 200 = 1 640 mV</span>.</li>
+        </ol>
+        <div class="result">V = <span class="mono">1,64 V</span> (= 1 640 mV)</div>
+      </div>
+
+      <div class="tip green" style="margin-top:14px">
+        <span class="ico">✅</span>
+        <p><b>Confira sempre a ordem de grandeza.</b> Um resultado de <span class="mono">1 640 V</span> em um circuito de 5 V é sinal de vírgula fora do lugar — não de componente queimado.</p>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center">
+      <h2 style="justify-content:center"><span class="num">▶</span>Pronto para praticar?</h2>
+      <p class="muted small" style="max-width:52ch;margin:0 auto 16px">São 40 questões em dois níveis, com correção imediata e explicação de cada resposta.</p>
+      <button class="btn" data-goto="exercicios">Ir para os exercícios</button>
+    </div>
+  </section>
+
+  <!-- ================= EXERCÍCIOS ================= -->
+  <section class="panel" id="panel-exercicios" role="tabpanel" aria-labelledby="tab-exercicios">
+
+    <div class="level-switch">
+      <button class="level-btn" data-level="conversao" aria-pressed="true"><span class="lv">Nível 1</span>Conversões</button>
+      <button class="level-btn" data-level="ohm" aria-pressed="false"><span class="lv">Nível 2</span>Lei de Ohm</button>
+    </div>
+
+    <div class="card" id="quiz-card">
+      <div class="quiz-top" id="quiz-top">
+        <div class="quiz-meta">Questão <b id="q-pos">1</b> de <b id="q-total">20</b></div>
+        <div class="quiz-meta">Acertos: <b id="q-score">0</b></div>
+      </div>
+      <div class="bar" id="quiz-bar"><i id="q-bar"></i></div>
+
+      <div id="q-body">
+        <div class="q-text" id="q-text"></div>
+        <div class="q-hint" id="q-hint"></div>
+        <div class="options" id="q-options"></div>
+        <div class="feedback" id="q-feedback">
+          <div class="fb-title" id="fb-title"></div>
+          <div class="fb-body" id="fb-body"></div>
+        </div>
+        <div class="quiz-actions">
+          <button class="btn" id="btn-next" disabled>Próxima questão</button>
+          <button class="btn ghost" id="btn-restart">Recomeçar</button>
+        </div>
+      </div>
+
+      <div id="q-result" style="display:none"></div>
+    </div>
+
+    <div class="tip blue">
+      <span class="ico">⌨️</span>
+      <p>No computador você pode responder com as teclas <b>1</b> a <b>5</b> (ou <b>A</b> a <b>E</b>) e avançar com <b>Enter</b>.</p>
+    </div>
+  </section>
+
+  <!-- ================= CONVERSOR ================= -->
+  <section class="panel" id="panel-conversor" role="tabpanel" aria-labelledby="tab-conversor">
+    <div class="card">
+      <h2><span class="num">⇄</span>Conversor de unidades</h2>
+      <p class="lead small">Digite um valor, escolha o prefixo e a grandeza. A página mostra o mesmo valor em todos os prefixos e destaca a forma usual.</p>
+
+      <div class="conv-form" style="margin-top:16px">
+        <div class="field">
+          <label for="cv-value">Valor</label>
+          <input id="cv-value" type="text" inputmode="decimal" value="0,005" autocomplete="off" spellcheck="false" aria-describedby="cv-help">
+        </div>
+        <div class="field">
+          <label for="cv-prefix">Prefixo</label>
+          <select id="cv-prefix">
+            <option value="1e6">M — mega</option>
+            <option value="1e3">k — quilo</option>
+            <option value="1" selected>— unidade</option>
+            <option value="1e-3">m — mili</option>
+            <option value="1e-6">μ — micro</option>
+            <option value="1e-9">n — nano</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="cv-unit">Grandeza</label>
+          <select id="cv-unit">
+            <option value="Ω" selected>Resistência (Ω)</option>
+            <option value="V">Tensão (V)</option>
+            <option value="A">Corrente (A)</option>
+            <option value="F">Capacitância (F)</option>
+            <option value="W">Potência (W)</option>
+            <option value="Hz">Frequência (Hz)</option>
+          </select>
+        </div>
+      </div>
+      <p class="small muted" id="cv-help" style="margin-top:8px">Use vírgula ou ponto para os decimais. Exemplos: <span class="mono">0,005</span> · <span class="mono">4.7</span> · <span class="mono">1 200</span>.</p>
+
+      <div class="conv-out" id="cv-out" aria-live="polite"></div>
+      <div class="conv-note" id="cv-note"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">i</span>Como ler o resultado</h2>
+      <p class="small">A linha destacada é a <b>forma usual</b> (notação de engenharia): número entre 1 e 999 com expoente múltiplo de 3. É assim que o valor apareceria no multímetro ou no código de cores de um resistor.</p>
+      <p class="small muted" style="margin-top:8px">Se o valor for zero ou negativo, a página avisa — resistência e capacitância, por exemplo, não podem ser negativas.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <p><b>Prefixos do SI e notação de engenharia</b> — material de apoio para a disciplina de Eletricidade, baseado nas listas de revisão matemática (Partes 3 e 4) do Curso Técnico em Eletrônica.</p>
+    <p style="margin-top:6px">Página única em HTML, CSS e JavaScript — sem bibliotecas externas. Funciona offline e em qualquer celular.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================
+     1. NAVEGAÇÃO POR ABAS
+     ========================================================= */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var panels = {
+    aprender: document.getElementById('panel-aprender'),
+    exercicios: document.getElementById('panel-exercicios'),
+    conversor: document.getElementById('panel-conversor')
+  };
+
+  function showTab(name){
+    if(!panels[name]) return;
+    tabs.forEach(function(t){
+      var on = t.dataset.tab === name;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    Object.keys(panels).forEach(function(k){
+      panels[k].classList.toggle('active', k === name);
+    });
+    if(history.replaceState){ history.replaceState(null, '', '#' + name); }
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){ showTab(t.dataset.tab); });
+  });
+  document.querySelectorAll('[data-goto]').forEach(function(b){
+    b.addEventListener('click', function(){ showTab(b.dataset.goto); });
+  });
+  if(location.hash){
+    var h = location.hash.replace('#','');
+    if(panels[h]) showTab(h);
+  }
+
+  /* =========================================================
+     2. BANCO DE QUESTÕES
+     ========================================================= */
+  var LEVELS = {
+    conversao: {
+      titulo: 'Nível 1 · Conversão de unidades',
+      hint: 'Escolha a forma mais usual de representar o valor.',
+      questions: [
+        { q:'Resistência de <span class="val">22 000 Ω</span>', o:['220 kΩ','0,22 Ω','22 kΩ','2,2 kΩ','220 Ω'], a:2,
+          why:'22 000 = 22 × 1 000, e 1 000 é o prefixo <b>k</b>. Logo, 22 000 Ω = <span class="mono">22 kΩ</span>. A vírgula andou 3 casas para a esquerda.' },
+        { q:'Tensão de <span class="val">13 800 V</span>', o:['1,38 MV','13,8 kV','138 kV','0,138 mV','138 V'], a:1,
+          why:'13 800 = 13,8 × 1 000 → <span class="mono">13,8 kV</span>. Cuidado: 1,38 MV seria 1 380 000 V, mil vezes maior.' },
+        { q:'Corrente de <span class="val">0,005 A</span>', o:['500 mA','0,05 μA','5 kA','5 mA','50 mA'], a:3,
+          why:'0,005 = 5 × 0,001 = 5 × 10<sup>−3</sup> → <span class="mono">5 mA</span>. De A para mA, a vírgula anda 3 casas para a direita.' },
+        { q:'Resistência de <span class="val">3 300 Ω</span>', o:['3,3 kΩ','330 kΩ','0,33 kΩ','33 kΩ','330 mΩ'], a:0,
+          why:'3 300 ÷ 1 000 = 3,3 → <span class="mono">3,3 kΩ</span>. O número ficou entre 1 e 999, como manda a notação de engenharia.' },
+        { q:'Tensão de <span class="val">0,03 V</span>', o:['3 kV','300 mV','30 mV','3 μV','300 μV'], a:2,
+          why:'0,03 = 30 × 0,001 → <span class="mono">30 mV</span>. São 3 casas para a direita: 0,03 → 30.' },
+        { q:'Resistência de <span class="val">560 000 Ω</span>', o:['560 MΩ','56 MΩ','5,6 kΩ','560 kΩ','56 mΩ'], a:3,
+          why:'560 000 = 560 × 1 000 → <span class="mono">560 kΩ</span>. 560 MΩ seria 560 000 000 Ω — mil vezes maior.' },
+        { q:'Corrente de <span class="val">0,00002 A</span>', o:['20 μA','2 mA','20 mA','0,2 μA','2 μA'], a:0,
+          why:'0,00002 = 20 × 10<sup>−6</sup> → <span class="mono">20 μA</span>. De A para μA são 6 casas para a direita.' },
+        { q:'Corrente de <span class="val">0,0078 A</span>', o:['7,8 mA','78 μA','78 mA','780 mA','7,8 μA'], a:0,
+          why:'0,0078 × 1 000 = 7,8 → <span class="mono">7,8 mA</span>. Se fosse 78 μA, o valor seria 0,000 078 A.' },
+        { q:'Corrente de <span class="val">0,000 005 6 A</span>', o:['56 μA','560 μA','5,6 mA','56 mA','5,6 μA'], a:4,
+          why:'0,000 005 6 × 1 000 000 = 5,6 → <span class="mono">5,6 μA</span>. São dois degraus (A → mA → μA), 6 casas.' },
+        { q:'Tensão de <span class="val">0,085 V</span>', o:['8,5 mV','85 μV','85 mV','850 mV','8,5 μV'], a:2,
+          why:'0,085 × 1 000 = 85 → <span class="mono">85 mV</span>. O valor está entre 0,001 e 1, então o prefixo natural é o mili.' },
+        { q:'Resistência de <span class="val">47 200 Ω</span>', o:['47,2 kΩ','4,72 MΩ','47,2 MΩ','4,72 kΩ','472 kΩ'], a:0,
+          why:'47 200 ÷ 1 000 = 47,2 → <span class="mono">47,2 kΩ</span>. Este é o famoso resistor de 47 k (código amarelo-violeta-laranja).' },
+        { q:'Corrente de <span class="val">0,015 A</span>', o:['15 μA','150 μA','15 mA','150 mA','1,5 mA'], a:2,
+          why:'0,015 × 1 000 = 15 → <span class="mono">15 mA</span>. Em μA seria 15 000 μA, um número pouco prático.' },
+        { q:'Resistência de <span class="val">820 000 Ω</span>', o:['820 kΩ','82 MΩ','8,2 kΩ','82 kΩ','8,2 MΩ'], a:0,
+          why:'820 000 ÷ 1 000 = 820 → <span class="mono">820 kΩ</span>. Ainda está abaixo de 1 000, então não subimos para mega.' },
+        { q:'Corrente de <span class="val">0,00042 A</span>', o:['420 μA','42 mA','42 μA','4,2 μA','4,2 mA'], a:0,
+          why:'0,00042 × 1 000 000 = 420 → <span class="mono">420 μA</span>. Em mA seria 0,42 mA — número menor que 1, pouco usual.' },
+        { q:'Corrente de <span class="val">0,08 A</span>', o:['8 mA','800 μA','80 mA','0,8 mA','8 μA'], a:2,
+          why:'0,08 × 1 000 = 80 → <span class="mono">80 mA</span>. Note que 0,08 A = 80 mA = 80 000 μA: o mesmo valor, três formas.' },
+        { q:'Tensão de <span class="val">0,0094 V</span>', o:['94 μV','940 μV','940 mV','9,4 mV','94 mV'], a:3,
+          why:'0,0094 × 1 000 = 9,4 → <span class="mono">9,4 mV</span>. Em μV seria 9 400 μV, com algarismos demais.' },
+        { q:'Tensão de <span class="val">0,2 V</span>', o:['20 μV','0,2 mV','200 μV','200 mV','20 mV'], a:3,
+          why:'0,2 × 1 000 = 200 → <span class="mono">200 mV</span>. A forma 0,2 V até é válida, mas o padrão técnico pede 200 mV.' },
+        { q:'Corrente de <span class="val">0,00031 A</span>', o:['31 μA','310 μA','3,1 mA','310 mA','31 mA'], a:1,
+          why:'0,00031 × 1 000 000 = 310 → <span class="mono">310 μA</span>. Em mA daria 0,31 mA, abaixo de 1.' },
+        { q:'Capacitância de <span class="val">0,000 000 1 F</span>', o:['10 nF','100 nF','100 μF','1 μF','10 μF'], a:1,
+          why:'0,000 000 1 = 100 × 10<sup>−9</sup> → <span class="mono">100 nF</span>. De F para nF são 9 casas para a direita.' },
+        { q:'Capacitância de <span class="val">0,0056 μF</span>', o:['560 mF','56 nF','5,6 nF','560 nF','56 mF'], a:2,
+          why:'De μF para nF descemos um degrau: × 1 000. Então 0,0056 μF = <span class="mono">5,6 nF</span>. Em picofarads seriam 5 600 pF.' }
+      ]
+    },
+
+    ohm: {
+      titulo: 'Nível 2 · Cálculos com a Lei de Ohm',
+      hint: 'Efetue a operação e dê o resultado em notação de engenharia.',
+      questions: [
+        { q:'V = 200 Ω × 0,03 A', o:['600 V','60 mV','6 mV','60 V','6 V'], a:4,
+          why:'200 × 0,03 = <span class="mono">6</span> → <b>6 V</b>. Em mV seria 6 000 mV, número grande demais para a forma usual.' },
+        { q:'I = <span class="frac"><span>12 V</span><span>1 000 Ω</span></span>', o:['12 mA','120 mA','12 μA','1,2 A','1,2 mA'], a:0,
+          why:'12 ÷ 1 000 = 0,012 A = <span class="mono">12 mA</span>. Atalho: V ÷ kΩ = mA → 12 ÷ 1 = 12 mA.' },
+        { q:'V = 390 Ω × 4 mA', o:['1 560 V','156 mV','15,6 mV','1,56 V','156 μV'], a:3,
+          why:'390 × 0,004 = 1,56 → <b>1,56 V</b>. Atalho: Ω × mA = mV → 390 × 4 = 1 560 mV = 1,56 V.' },
+        { q:'I = <span class="frac"><span>15 V</span><span>3 kΩ</span></span>', o:['50 mA','5 mA','500 μA','500 mA','0,5 A'], a:1,
+          why:'15 ÷ 3 000 = 0,005 A = <span class="mono">5 mA</span>. Atalho: V ÷ kΩ = mA → 15 ÷ 3 = 5 mA.' },
+        { q:'I = <span class="frac"><span>5 V</span><span>100 kΩ</span></span>', o:['5 mA','50 μA','500 μA','50 mA','0,05 A'], a:1,
+          why:'5 ÷ 100 000 = 0,000 05 A = <span class="mono">50 μA</span>. Atalho: V ÷ kΩ = mA → 5 ÷ 100 = 0,05 mA = 50 μA.' },
+        { q:'V = 47 kΩ × 2 mA', o:['94 mV','940 μV','9,4 V','940 mV','94 V'], a:4,
+          why:'47 000 × 0,002 = 94 → <b>94 V</b>. Atalho: kΩ × mA = V → 47 × 2 = 94 V.' },
+        { q:'V = 8,2 kΩ × 200 μA', o:['164 mV','1,64 V','16,4 mV','16,4 V','164 μV'], a:1,
+          why:'8 200 × 0,000 2 = 1,64 → <b>1,64 V</b>. Atalho: kΩ × μA = mV → 8,2 × 200 = 1 640 mV = 1,64 V.' },
+        { q:'V = 220 Ω × 50 mA', o:['110 mV','110 V','1,1 V','11 mV','11 V'], a:4,
+          why:'220 × 0,05 = 11 → <b>11 V</b>. Atalho: Ω × mA = mV → 220 × 50 = 11 000 mV = 11 V.' },
+        { q:'I = <span class="frac"><span>85 mV</span><span>100 Ω</span></span>', o:['85 mA','850 μA','8,5 mA','85 μA','8,5 A'], a:1,
+          why:'0,085 ÷ 100 = 0,000 85 A = <span class="mono">850 μA</span>. Em mA seria 0,85 mA, abaixo de 1.' },
+        { q:'R = <span class="frac"><span>20 V</span><span>5 mA</span></span>', o:['10 mΩ','100 Ω','4 kΩ','400 Ω','4 mΩ'], a:2,
+          why:'20 ÷ 0,005 = 4 000 Ω = <span class="mono">4 kΩ</span>. Atalho: V ÷ mA = kΩ → 20 ÷ 5 = 4 kΩ.' },
+        { q:'R = <span class="frac"><span>12 V</span><span>20 mA</span></span>', o:['6 mΩ','24 kΩ','600 Ω','6 kΩ','60 Ω'], a:2,
+          why:'12 ÷ 0,02 = 600 → <span class="mono">600 Ω</span>. Atalho: V ÷ mA = kΩ → 12 ÷ 20 = 0,6 kΩ = 600 Ω.' },
+        { q:'R = <span class="frac"><span>15 V</span><span>10 mA</span></span>', o:['1,5 kΩ','15 mΩ','150 Ω','15 kΩ','15 Ω'], a:0,
+          why:'15 ÷ 0,01 = 1 500 Ω = <span class="mono">1,5 kΩ</span>. Atalho: 15 ÷ 10 = 1,5 kΩ.' },
+        { q:'R = <span class="frac"><span>30 V</span><span>600 mA</span></span>', o:['5 kΩ','18 kΩ','50 Ω','50 kΩ','18 mΩ'], a:2,
+          why:'30 ÷ 0,6 = 50 → <span class="mono">50 Ω</span>. Atalho: 30 ÷ 600 = 0,05 kΩ = 50 Ω.' },
+        { q:'V = 560 Ω × 30 μA', o:['168 μV','168 mV','16,8 V','16,8 mV','1,68 V'], a:3,
+          why:'560 × 0,000 03 = 0,016 8 V = <span class="mono">16,8 mV</span>. Atalho: Ω × μA = μV → 560 × 30 = 16 800 μV = 16,8 mV.' },
+        { q:'R = <span class="frac"><span>4,5 V</span><span>10 mA</span></span>', o:['45 kΩ','450 Ω','4,5 kΩ','45 Ω','450 kΩ'], a:1,
+          why:'4,5 ÷ 0,01 = 450 → <span class="mono">450 Ω</span>. Atalho: 4,5 ÷ 10 = 0,45 kΩ = 450 Ω.' },
+        { q:'R = <span class="frac"><span>10 V</span><span>20 mA</span></span>', o:['500 mΩ','50 Ω','5 kΩ','50 mΩ','500 Ω'], a:4,
+          why:'10 ÷ 0,02 = 500 → <span class="mono">500 Ω</span>. Atalho: 10 ÷ 20 = 0,5 kΩ = 500 Ω.' },
+        { q:'I = <span class="frac"><span>330 mV</span><span>330 Ω</span></span>', o:['10 mA','1 mA','100 μA','100 mA','1 A'], a:1,
+          why:'0,33 ÷ 330 = 0,001 A = <span class="mono">1 mA</span>. Repare que mV ÷ Ω dá mA diretamente: 330 ÷ 330 = 1 mA.' },
+        { q:'R = <span class="frac"><span>740 μV</span><span>20 mA</span></span>', o:['370 Ω','370 mΩ','37 mΩ','3,7 kΩ','3,7 Ω'], a:2,
+          why:'740 × 10<sup>−6</sup> ÷ 20 × 10<sup>−3</sup> = 37 × 10<sup>−3</sup> Ω = <span class="mono">37 mΩ</span>. Resultado bem pequeno — típico de contato ou trecho de fio.' },
+        { q:'V = 680 Ω × 0,5 mA', o:['3,40 V','34 V','3,4 mV','340 μV','340 mV'], a:4,
+          why:'680 × 0,000 5 = 0,34 V = <span class="mono">340 mV</span>. Atalho: Ω × mA = mV → 680 × 0,5 = 340 mV.' },
+        { q:'R = <span class="frac"><span>5,6 mV</span><span>800 μA</span></span>', o:['7 Ω','70 mΩ','7 kΩ','700 mΩ','0,7 Ω'], a:0,
+          why:'0,0056 ÷ 0,000 8 = 7 → <span class="mono">7 Ω</span>. Confira: 7 Ω × 800 μA = 5,6 mV. ✔' }
+      ]
+    }
+  };
+
+  /* =========================================================
+     3. MOTOR DO QUIZ
+     ========================================================= */
+  var el = {
+    pos: document.getElementById('q-pos'),
+    total: document.getElementById('q-total'),
+    score: document.getElementById('q-score'),
+    bar: document.getElementById('q-bar'),
+    text: document.getElementById('q-text'),
+    hint: document.getElementById('q-hint'),
+    options: document.getElementById('q-options'),
+    feedback: document.getElementById('q-feedback'),
+    fbTitle: document.getElementById('fb-title'),
+    fbBody: document.getElementById('fb-body'),
+    next: document.getElementById('btn-next'),
+    restart: document.getElementById('btn-restart'),
+    body: document.getElementById('q-body'),
+    result: document.getElementById('q-result')
+  };
+
+  var LETTERS = ['A','B','C','D','E'];
+  var state = { level:'conversao', order:[], pos:0, score:0, answered:false, wrong:[] };
+
+  function shuffle(arr){
+    for(var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+
+  function startLevel(level){
+    state.level = level;
+    state.order = shuffle(LEVELS[level].questions.map(function(_, i){ return i; }));
+    state.pos = 0;
+    state.score = 0;
+    state.answered = false;
+    state.wrong = [];
+    el.result.style.display = 'none';
+    el.body.style.display = '';
+    document.getElementById('quiz-top').style.display = '';
+    document.getElementById('quiz-bar').style.display = '';
+    document.querySelectorAll('.level-btn').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.level === level ? 'true' : 'false');
+    });
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    var level = LEVELS[state.level];
+    var q = level.questions[state.order[state.pos]];
+    state.answered = false;
+
+    el.pos.textContent = state.pos + 1;
+    el.total.textContent = level.questions.length;
+    el.score.textContent = state.score;
+    el.bar.style.width = ((state.pos) / level.questions.length * 100) + '%';
+
+    el.text.innerHTML = q.q;
+    el.hint.textContent = level.hint;
+
+    el.options.innerHTML = '';
+    q.o.forEach(function(opt, i){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'opt';
+      b.setAttribute('data-i', i);
+      b.innerHTML = '<span class="letter">' + LETTERS[i] + '</span><span class="txt">' + opt + '</span>';
+      b.addEventListener('click', function(){ answer(i); });
+      el.options.appendChild(b);
+    });
+
+    el.feedback.className = 'feedback';
+    el.feedback.classList.remove('show');
+    el.next.disabled = true;
+    el.next.textContent = (state.pos === level.questions.length - 1) ? 'Ver resultado' : 'Próxima questão';
+  }
+
+  function answer(i){
+    if(state.answered) return;
+    state.answered = true;
+
+    var level = LEVELS[state.level];
+    var q = level.questions[state.order[state.pos]];
+    var correct = (i === q.a);
+
+    var buttons = el.options.querySelectorAll('.opt');
+    buttons.forEach(function(b, idx){
+      b.disabled = true;
+      if(idx === q.a) b.classList.add('correct');
+      else if(idx === i) b.classList.add('wrong');
+      else b.classList.add('dim');
+    });
+
+    if(correct){
+      state.score++;
+      el.score.textContent = state.score;
+      el.feedback.className = 'feedback ok show';
+      el.fbTitle.innerHTML = '✔ Correto!';
+      el.fbBody.innerHTML = q.why;
+    } else {
+      state.wrong.push({ q: q.q, correct: q.o[q.a], chosen: q.o[i], why: q.why });
+      el.feedback.className = 'feedback no show';
+      el.fbTitle.innerHTML = '✘ Ainda não — a resposta é <span class="mono">' + q.o[q.a] + '</span>';
+      el.fbBody.innerHTML = q.why;
+    }
+
+    el.next.disabled = false;
+    el.bar.style.width = ((state.pos + 1) / level.questions.length * 100) + '%';
+    el.feedback.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  function nextQuestion(){
+    if(!state.answered) return;
+    var level = LEVELS[state.level];
+    if(state.pos < level.questions.length - 1){
+      state.pos++;
+      renderQuestion();
+      document.getElementById('quiz-card').scrollIntoView({behavior:'smooth', block:'start'});
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult(){
+    var total = LEVELS[state.level].questions.length;
+    var pct = Math.round(state.score / total * 100);
+    var msg, title;
+    if(pct === 100){ title = 'Perfeito! 🎯'; msg = 'Você dominou as conversões e os cálculos com prefixos. Agora é manter o hábito de conferir a ordem de grandeza.'; }
+    else if(pct >= 80){ title = 'Muito bom!'; msg = 'Só alguns deslizes de vírgula. Revise as questões abaixo e refaça o nível para fixar.'; }
+    else if(pct >= 60){ title = 'Bom começo'; msg = 'A base está aí, mas a troca de prefixos ainda oscila. Volte à aba Aprender, releia a escada dos prefixos e tente de novo.'; }
+    else { title = 'Vamos revisar'; msg = 'Vale reler a explicação com calma — principalmente a regra das 3 casas — e refazer o nível. Errar aqui é parte do processo.'; }
+
+    el.body.style.display = 'none';
+    el.result.style.display = '';
+    document.getElementById('quiz-top').style.display = 'none';
+    document.getElementById('quiz-bar').style.display = 'none';
+
+    var html = '<div class="result-screen">';
+    html += '<div class="score-ring" style="--p:' + pct + '"><div class="inner"><div class="n">' + state.score + '/' + total + '</div><div class="d">' + pct + '% de acertos</div></div></div>';
+    html += '<h3>' + title + '</h3>';
+    html += '<p class="msg">' + msg + '</p>';
+    html += '<div class="quiz-actions" style="justify-content:center;margin-top:18px">';
+    html += '<button class="btn" id="btn-again">Refazer este nível</button>';
+    html += '<button class="btn ghost" id="btn-other">' + (state.level === 'conversao' ? 'Ir para a Lei de Ohm' : 'Voltar às conversões') + '</button>';
+    html += '</div>';
+
+    if(state.wrong.length){
+      html += '<div class="review"><h4>Para revisar (' + state.wrong.length + ')</h4>';
+      state.wrong.forEach(function(w){
+        html += '<div class="review-item">';
+        html += '<div class="rq">' + w.q + '</div>';
+        html += '<div>Resposta correta: <span class="ra">' + w.correct + '</span> &nbsp;·&nbsp; você marcou: <span class="ry">' + w.chosen + '</span></div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+    el.result.innerHTML = html;
+
+    document.getElementById('btn-again').addEventListener('click', function(){ startLevel(state.level); });
+    document.getElementById('btn-other').addEventListener('click', function(){
+      startLevel(state.level === 'conversao' ? 'ohm' : 'conversao');
+    });
+    document.getElementById('quiz-card').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  el.next.addEventListener('click', nextQuestion);
+  el.restart.addEventListener('click', function(){ startLevel(state.level); });
+
+  document.querySelectorAll('.level-btn').forEach(function(b){
+    b.addEventListener('click', function(){ startLevel(b.dataset.level); });
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(!panels.exercicios.classList.contains('active')) return;
+    if(el.body.style.display === 'none') return;
+    var k = e.key.toUpperCase();
+    var idx = -1;
+    if(k >= '1' && k <= '5') idx = parseInt(k, 10) - 1;
+    else if(LETTERS.indexOf(k) >= 0) idx = LETTERS.indexOf(k);
+    if(idx >= 0 && !state.answered){
+      e.preventDefault();
+      answer(idx);
+    } else if(e.key === 'Enter' && state.answered){
+      e.preventDefault();
+      nextQuestion();
+    }
+  });
+
+  /* =========================================================
+     4. CONVERSOR
+     ========================================================= */
+  var PREFIXES = [
+    { sym:'M', name:'mega',  f:1e6 },
+    { sym:'k', name:'quilo', f:1e3 },
+    { sym:'',  name:'unidade', f:1 },
+    { sym:'m', name:'mili',  f:1e-3 },
+    { sym:'μ', name:'micro', f:1e-6 },
+    { sym:'n', name:'nano',  f:1e-9 }
+  ];
+
+  var cvValue = document.getElementById('cv-value');
+  var cvPrefix = document.getElementById('cv-prefix');
+  var cvUnit = document.getElementById('cv-unit');
+  var cvOut = document.getElementById('cv-out');
+  var cvNote = document.getElementById('cv-note');
+
+  function sup(n){
+    return '<sup>' + String(n).replace('-', '−') + '</sup>';
+  }
+
+  function fmtNum(x){
+    if(!isFinite(x)) return '—';
+    if(x === 0) return '0';
+    var abs = Math.abs(x);
+    if(abs >= 1e-4 && abs < 1e9){
+      var s = Number(x.toPrecision(6)).toString();
+      if(s.indexOf('e') !== -1){ return sci(x); }
+      var neg = s.charAt(0) === '-';
+      if(neg) s = s.slice(1);
+      var parts = s.split('.');
+      var ip = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      var out = parts[1] ? ip + ',' + parts[1] : ip;
+      return (neg ? '−' : '') + out;
+    }
+    return sci(x);
+  }
+
+  function sci(x){
+    var abs = Math.abs(x);
+    var e = Math.floor(Math.log10(abs));
+    var m = x / Math.pow(10, e);
+    m = Number(m.toPrecision(4));
+    if(Math.abs(m) >= 10){ m = m / 10; e += 1; }
+    if(Math.abs(m) < 1){ m = m * 10; e -= 1; }
+    return fmtNum(m) + ' × 10' + sup(e);
+  }
+
+  function parseValue(str){
+    if(!str) return NaN;
+    var s = String(str).trim()
+      .replace(/\s|\.(?=\d{3}\b)/g, '')
+      .replace(',', '.');
+    var v = parseFloat(s);
+    return isFinite(v) ? v : NaN;
+  }
+
+  function renderConverter(){
+    var v = parseValue(cvValue.value);
+    var f = parseFloat(cvPrefix.value);
+    var unit = cvUnit.value;
+
+    if(!isFinite(v)){
+      cvOut.innerHTML = '<div class="conv-row"><span class="k">Digite um número válido</span><span class="v">—</span></div>';
+      cvNote.innerHTML = '';
+      return;
+    }
+
+    var base = v * f;               // valor na unidade base
+    var absBase = Math.abs(base);
+
+    // prefixo da forma usual (notação de engenharia)
+    var usualSym = null;
+    if(absBase > 0){
+      var e3 = Math.floor(Math.log10(absBase) / 3) * 3;
+      e3 = Math.max(-9, Math.min(6, e3));
+      var map = {6:'M', 3:'k', 0:'', '-3':'m', '-6':'μ', '-9':'n'};
+      usualSym = map[e3];
+    }
+
+    var html = '';
+    PREFIXES.forEach(function(p){
+      var val = base / p.f;
+      var isUsual = (p.sym === usualSym);
+      html += '<div class="conv-row' + (isUsual ? ' usual' : '') + '">';
+      html += '<span class="k">' + (p.sym === '' ? 'unidade' : p.name) + ' (' + (p.sym === '' ? unit : p.sym + unit) + ')' + (isUsual ? '<span class="badge">usual</span>' : '') + '</span>';
+      html += '<span class="v">' + fmtNum(val) + ' ' + (p.sym === '' ? unit : p.sym + unit) + '</span>';
+      html += '</div>';
+    });
+    cvOut.innerHTML = html;
+
+    // nota com notação científica e de engenharia
+    var note = '';
+    if(base === 0){
+      note = 'Zero é zero em qualquer prefixo.';
+    } else {
+      var e = Math.floor(Math.log10(Math.abs(base)));
+      var mant = base / Math.pow(10, e);
+      mant = Number(mant.toPrecision(4));
+      if(Math.abs(mant) >= 10){ mant /= 10; e += 1; }
+      note = 'Notação científica: <span class="mono">' + fmtNum(mant) + ' × 10' + sup(e) + ' ' + unit + '</span>';
+      if(usualSym !== null){
+        var uf = PREFIXES.filter(function(p){ return p.sym === usualSym; })[0];
+        note += ' &nbsp;·&nbsp; Notação de engenharia: <span class="mono">' + fmtNum(base / uf.f) + ' ' + (usualSym === '' ? unit : usualSym + unit) + '</span>';
+      }
+      if(v < 0){
+        note += '<br><b>Atenção:</b> valor negativo — resistência e capacitância não podem ser negativas.';
+      }
+    }
+    cvNote.innerHTML = note;
+  }
+
+  [cvValue, cvPrefix, cvUnit].forEach(function(node){
+    node.addEventListener('input', renderConverter);
+    node.addEventListener('change', renderConverter);
+  });
+
+  /* =========================================================
+     5. INICIALIZAÇÃO
+     ========================================================= */
+  startLevel('conversao');
+  renderConverter();
+})();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
